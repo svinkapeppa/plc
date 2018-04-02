@@ -3,7 +3,19 @@
 
 int main() {
   TRY {
-    int x = 5;
+    CObject x;
+    TRY {
+      CObject y;
+      THROW(2);
+    }
+    CATCH {
+      std::cout << "NESTED" << std::endl;
+    }
+    FINALLY;
+    THROW(1);
+  }
+  CATCH {
+    std::cout << "CATCH" << std::endl;
   }
   FINALLY;
   return 0;

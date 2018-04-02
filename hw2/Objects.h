@@ -8,27 +8,27 @@ private:
   CObject *prev;
 public:
   CObject();
-
   virtual ~CObject();
 
   void SetPrev(CObject *object);
-
+  CObject *GetPrev();
   void Logout();
 };
 
 class CMaster {
 private:
-  jmp_buf env;
   CMaster *prev;
   CObject *object;
 public:
-  CMaster();
+  jmp_buf env;
 
+  CMaster();
   virtual ~CMaster();
 
   CObject *GetObject();
-
   void SetObject(CObject *object_);
 };
+
+extern CMaster *master;
 
 #endif //HW2_OBJECTS_H
