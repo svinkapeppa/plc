@@ -5,7 +5,14 @@ class CException {
 public:
   CException();
 
-  virtual ~CException();
+  virtual std::string what();
+};
+
+class CLogicException : public CException {
+public:
+  CLogicException();
+
+  virtual std::string what();
 };
 
 #endif //HW2_EXCEPTIONS_H

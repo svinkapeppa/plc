@@ -54,3 +54,7 @@ CObject *CMaster::GetObject() {
 void CMaster::SetObject(CObject *object_) {
   object = object_;
 }
+
+CMaster *CMaster::GetPrev() {
+  return prev;
+}

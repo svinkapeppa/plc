@@ -4,29 +4,29 @@
 #include <csetjmp>
 #include <cstdlib>
 #include "Objects.h"
+#include "Exceptions.h"
 
-void Throw(int n);
-void Rethrow(int env);
+void Throw();
 
 #define TRY {\
   CMaster slave;\
+  auto *exc = new CException;\
   int env = setjmp(slave.env);\
   if (env == 0) {
 
-#define CATCH\
-  } else {
+#define CATCH(type)\
+  } else if (dynamic_cast<type>(exc) != nullptr) {\
+      std::cout << exc->what() << std::endl;\
 
 #define FINALLY\
     }\
-  }\
+  }
 
-#define THROW(exc)\
-  Throw(exc);
+#define THROW(exc_)\
+  exc = exc_;\
+  Throw();
 
-#define RETHROW\
-  Rethrow(env);
-
-void Throw(int n) {
+void Throw() {
   CMaster *tmp = master;
   CObject *object = master->GetObject();
 
@@ -36,11 +36,12 @@ void Throw(int n) {
     objectBuf->~CObject();
   }
 
-  longjmp(tmp->env, n);
-}
+  CMaster *fake = master;
+  if (fake != nullptr) {
+    master = fake->GetPrev();
+  }
 
-void Rethrow(int env) {
-
+  longjmp(tmp->env, 1);
 }
 
 #endif //HW2_CMACROS_H

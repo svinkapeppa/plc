@@ -27,6 +27,7 @@ public:
 
   CObject *GetObject();
   void SetObject(CObject *object_);
+  CMaster *GetPrev();
 };
 
 extern CMaster *master;
