@@ -3,12 +3,14 @@
 
 class CException {
 public:
-  virtual std::string what();
+  virtual int Id();
+  virtual std::string What();
 };
 
 class CLogicException : public CException {
 public:
-  virtual std::string what();
+  virtual int Id();
+  virtual std::string What();
 };
 
 #endif //HW2_EXCEPTIONS_H

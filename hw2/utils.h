@@ -6,17 +6,21 @@
 #include "Objects.h"
 #include "Exceptions.h"
 
-void Throw();
+void Throw(int id);
 
 #define TRY {\
   CMaster slave;\
-  auto *exc = new CException;\
+  auto exc = new CException;\
   int env = setjmp(slave.env);\
+  if (env == 2) {\
+    CLogicException exc_;\
+    exc = &exc_;\
+  }\
   if (env == 0) {
 
 #define CATCH(type)\
   } else if (dynamic_cast<type>(exc) != nullptr) {\
-      std::cout << exc->what() << std::endl;\
+      std::cout << exc->What() << std::endl;\
 
 #define FINALLY\
     }\
@@ -24,10 +28,10 @@ void Throw();
 
 #define THROW(type)\
   type exc_;\
-  exc = &exc_;\
-  Throw();
+  CException *exc = &exc_;\
+  Throw(exc_.Id());
 
-void Throw() {
+void Throw(int id) {
   CMaster *tmp = master;
   CObject *object = master->GetObject();
 
@@ -44,7 +48,7 @@ void Throw() {
     master = fake->GetPrev();
   }
 
-  longjmp(tmp->env, 1);
+  longjmp(tmp->env, id);
 }
 
 #endif //HW2_CMACROS_H
