@@ -22,20 +22,23 @@ void Throw();
     }\
   }
 
-#define THROW(exc_)\
-  exc = exc_;\
+#define THROW(type)\
+  type exc_;\
+  exc = &exc_;\
   Throw();
 
 void Throw() {
   CMaster *tmp = master;
   CObject *object = master->GetObject();
 
+  // Delete objects from stack frame
   while (object != nullptr) {
     CObject *objectBuf = object;
     object = object->GetPrev();
     objectBuf->~CObject();
   }
 
+  // Change stack frame
   CMaster *fake = master;
   if (fake != nullptr) {
     master = fake->GetPrev();

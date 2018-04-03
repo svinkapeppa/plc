@@ -6,15 +6,13 @@ int main() {
     CObject x;
     TRY {
       CObject y;
-      CLogicException e;
-      THROW(&e);
+      THROW(CLogicException);
     }
     CATCH(CException*) {
       std::cout << "NESTED" << std::endl;
     }
     FINALLY;
-    CException e;
-    THROW(&e);
+    THROW(CException);
   }
   CATCH(CLogicException*) {
     std::cout << "CATCH" << std::endl;
