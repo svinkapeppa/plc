@@ -3,6 +3,7 @@
 
 #include <csetjmp>
 #include <cstdlib>
+#include <cassert>
 #include "Objects.h"
 #include "Exceptions.h"
 
@@ -19,8 +20,10 @@ void Throw(int id);
   if (env == 0) {
 
 #define CATCH(type)\
-  } else if (dynamic_cast<type>(exc) != nullptr) {\
-      std::cout << exc->What() << std::endl;\
+  } else if (dynamic_cast<type>(exc) == nullptr) {\
+      std::cout << "Runtime error" << std::endl;\
+      exit(-1);\
+  } else {\
 
 #define FINALLY\
     }\
@@ -32,6 +35,11 @@ void Throw(int id);
   Throw(exc_.Id());
 
 void Throw(int id) {
+  if (master == nullptr) {
+    std::cout << "Seems like exception was thrown outside a try-catch block. Check your code" << std::endl;
+    exit(-1);
+  }
+
   CMaster *tmp = master;
   CObject *object = master->GetObject();
 
@@ -44,9 +52,8 @@ void Throw(int id) {
 
   // Change stack frame
   CMaster *fake = master;
-  if (fake != nullptr) {
-    master = fake->GetPrev();
-  }
+  assert(fake != nullptr);
+  master = fake->GetPrev();
 
   longjmp(tmp->env, id);
 }
