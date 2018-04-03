@@ -4,6 +4,8 @@
 
 Особенности реализации описаны в [specification.md](text/specification.md).
 
+Примеры работы показаны в [tests](tests).
+
 [utils.h](utils.h) - реализация макросов
 
 [Exception.h](Exceptions.h) - библиотека для работы с исключениями
