@@ -1,62 +1,78 @@
 #include <iostream>
-#include "utils.h"
+#include <map>
+#include <vector>
+
 #include "Base.h"
 #include "Derived.h"
+#include "utils.h"
 
-VIRTUAL_CLASS(Base)
-  static const int epoch = 0;
-  DECLARE_METHOD(Common)
-    std::cout << "It is an original method in Base class" << std::endl;
-  END_DECLARATION
-  DECLARE_METHOD(BaseDefault)
-    std::cout << "It is a default method in Base class" << std::endl;
-  END_DECLARATION
-  VIRTUAL_CLASS_CONSTRUCTOR(Base)
-    REGISTER_METHOD(Base, Common, "Common")
-    REGISTER_METHOD(Base, BaseDefault, "BaseDefault")
-  END_VIRTUAL_CLASS_CONSTRUCTOR
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+VIRTUAL_CLASS(A)
 END_VIRTUAL_CLASS
 
-VIRTUAL_CLASS_DERIVED(Base, Derived)
-  DECLARE_METHOD(Common)
-    std::cout << "This is an overridden method in Derived class" << std::endl;
-  END_DECLARATION
-  DECLARE_METHOD(DerivedDefault)
-    std::cout << "It is a default method in Derived class" << std::endl;
-  END_DECLARATION
-  VIRTUAL_CLASS_DERIVED_CONSTRUCTOR(Derived)
-    REGISTER_METHOD_DERIVED(Derived, DerivedDefault, "DerivedDefault")
-    REGISTER_METHOD_DERIVED(Derived, Common, "Common")
-  END_VIRTUAL_CLASS_DERIVED_CONSTRUCTOR
-END_VIRTUAL_CLASS_DERIVED
+METHOD_DECLARATION(A, Func)
+  std::cout << "AFunc" << std::endl;
+END_METHOD_DECLARATION
+
+METHOD_DECLARATION(A, Skate)
+  std::cout << "ASkate" << std::endl;
+END_METHOD_DECLARATION
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+DERIVED_VIRTUAL_CLASS(B, A, std::vector<std::string>{"A"})
+END_DERIVED_VIRTUAL_CLASS
+
+METHOD_DECLARATION(B, Func)
+  std::cout << "BFunc" << std::endl;
+END_METHOD_DECLARATION
+
+METHOD_DECLARATION(B, Sky)
+  std::cout << "BSky" << std::endl;
+END_METHOD_DECLARATION
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+auto ancestors = std::vector<std::string>{"B", "A"};
+
+DERIVED_VIRTUAL_CLASS(C, B, ancestors)
+END_DERIVED_VIRTUAL_CLASS
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-  std::cout << "[*] Setting up the environment" << std::endl;
-  Base base;
-  Derived derived;
-  auto super = reinterpret_cast<Base*>(&derived);
-  std::cout << "[x] Environment is ready" << std::endl;
+  METHOD_REGISTRATION(A, Func);
+  METHOD_REGISTRATION(A, Skate);
+  METHOD_REGISTRATION(B, Func);
+  METHOD_REGISTRATION(B, Sky);
 
-  std::cout << std::endl << "[*] BASE CLASS" << std::endl;
-  std::cout << "base epoch: " << base.epoch << std::endl;
-  VIRTUAL_CALL(base, "Common")
-  VIRTUAL_CALL(base, "BaseDefault")
-  VIRTUAL_CALL(base, "DerivedDefault")
-  std::cout << "[x] BASE CLASS" << std::endl;
+  A a;
+  B b;
+  C c;
+  auto d = reinterpret_cast<A*>(&b);
+  auto e = reinterpret_cast<A*>(&c);
 
-  std::cout << std::endl << "[*] DERIVED CLASS" << std::endl;
-  std::cout << "derived epoch: " << derived.epoch << std::endl;
-  VIRTUAL_CALL(derived, "Common")
-  VIRTUAL_CALL(derived, "BaseDefault")
-  VIRTUAL_CALL(derived, "DerivedDefault")
-  std::cout << "[x] DERIVED CLASS" << std::endl;
+  VIRTUAL_CALL(a, Func)
+  VIRTUAL_CALL(a, Skate)
+  std::cout << std::endl;
 
-  std::cout << std::endl << "[*] POLYMORPHISM" << std::endl;
-  std::cout << "super epoch: " << super->epoch << std::endl;
-  VIRTUAL_CALL((*super), "Common")
-  VIRTUAL_CALL((*super), "BaseDefault")
-  VIRTUAL_CALL((*super), "DerivedDefault")
-  std::cout << "[x] POLYMORPHISM" << std::endl;
+  VIRTUAL_CALL(b, Func)
+  VIRTUAL_CALL(b, Skate)
+  VIRTUAL_CALL(b, Sky)
+  std::cout << std::endl;
 
-  return 0;
+  VIRTUAL_CALL(c, Func)
+  VIRTUAL_CALL(c, Skate)
+  VIRTUAL_CALL(c, Sky)
+  std::cout << std::endl;
+
+  VIRTUAL_CALL((*d), Func)
+  VIRTUAL_CALL((*d), Skate)
+  VIRTUAL_CALL((*d), Sky)
+  std::cout << std::endl;
+
+  VIRTUAL_CALL((*e), Func)
+  VIRTUAL_CALL((*e), Skate)
+  VIRTUAL_CALL((*e), Sky)
 }
