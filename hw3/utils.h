@@ -1,55 +1,23 @@
-#ifndef HW3_1_UTILS_H
-#define HW3_1_UTILS_H
+#ifndef HW3_UTILS_H
+#define HW3_UTILS_H
 
-std::map<std::string, void (*)()> table;
+#define METHOD(class_t, method)\
+void __ ## class_t ## __ ## method ## __() {\
 
-#define METHOD_DECLARATION(class_t, method)\
-void class_t ## method() {\
-
-#define END_METHOD_DECLARATION\
+#define END_METHOD(class_t, method)\
 }\
-
-#define METHOD_REGISTRATION(class_t, method)\
-table[# class_t # method] = class_t ## method;\
+int __ ## class_t ## __ ## method ## __register__() {\
+  class_t::__vtable[#method] = __ ## class_t ## __ ## method ## __;\
+  return 0;\
+}\
+int __ ## class_t ## __ ## method ## __init__ = __ ## class_t ## __ ## method ## __register__();\
 
 #define VIRTUAL_CALL(object, method)\
-if (object.bases.size()) {\
-  for (int i = 0; i < object.bases.size(); ++i) {\
-    try {\
-      auto it = table.at(object.bases[i] + # method);\
-      try {\
-        table.at(*object.id + # method)();\
-      } catch (...) {\
-        it();\
-      }\
-      break;\
-    } catch (...) {\
-      if (i == object.bases.size() - 1) {\
-        try {\
-          table.at(*object.id + # method)();\
-        } catch (...) {\
-          std::cout << "Not implemented" << std::endl;\
-        }\
-      } else {\
-        continue;\
-      }\
-    }\
-  }\
-} else {\
-  try {\
-    auto it = table.at(object.type + # method);\
-    if (*object.id != object.type) {\
-      try {\
-        table.at(*object.id + # method)();\
-      } catch (...) {\
-        it();\
-      }\
-    } else {\
-      it();\
-    }\
-  } catch (...) {\
-    std::cout << "Not implemented" << std::endl;\
-  }\
+try {\
+  auto it = object.__vtable.at(#method);\
+  object.__reference->at(#method)();\
+} catch (...) {\
+  std::cout << "Error: " <<  #object << " doesn't have method named " << #method << std::endl;\
 }\
 
-#endif //HW3_1_UTILS_H
+#endif //HW3_UTILS_H

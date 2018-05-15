@@ -1,78 +1,90 @@
-#include <iostream>
 #include <map>
-#include <vector>
+#include <iostream>
 
 #include "Base.h"
 #include "Derived.h"
 #include "utils.h"
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-VIRTUAL_CLASS(A)
-END_VIRTUAL_CLASS
+VIRTUAL_CLASS(Car)
+END_VIRTUAL_CLASS(Car)
 
-METHOD_DECLARATION(A, Func)
-  std::cout << "AFunc" << std::endl;
-END_METHOD_DECLARATION
+METHOD(Car, What)
+  std::cout << "It is a default class for handling Cars" << std::endl;
+END_METHOD(Car, What)
 
-METHOD_DECLARATION(A, Skate)
-  std::cout << "ASkate" << std::endl;
-END_METHOD_DECLARATION
+METHOD(Car, GetCompany)
+  std::cout << "Default Car Company" << std::endl;
+END_METHOD(Car, GetCompany)
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-DERIVED_VIRTUAL_CLASS(B, A, std::vector<std::string>{"A"})
-END_DERIVED_VIRTUAL_CLASS
+DERIVED_VIRTUAL_CLASS(Ford, Car)
+END_DERIVED_VIRTUAL_CLASS(Ford, Car)
 
-METHOD_DECLARATION(B, Func)
-  std::cout << "BFunc" << std::endl;
-END_METHOD_DECLARATION
+METHOD(Ford, GetCompany)
+  std::cout << "Ford Inc" << std::endl;
+END_METHOD(Ford, GetCompany)
 
-METHOD_DECLARATION(B, Sky)
-  std::cout << "BSky" << std::endl;
-END_METHOD_DECLARATION
+METHOD(Ford, IsCool)
+  std::cout << "So-so" << std::endl;
+END_METHOD(Ford, IsCool)
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-auto ancestors = std::vector<std::string>{"B", "A"};
+DERIVED_VIRTUAL_CLASS(Mustang, Ford)
+END_DERIVED_VIRTUAL_CLASS(Mustang, Ford)
 
-DERIVED_VIRTUAL_CLASS(C, B, ancestors)
-END_DERIVED_VIRTUAL_CLASS
+METHOD(Mustang, IsCool)
+  std::cout << "Definitely" << std::endl;
+END_METHOD(Mustang, IsCool)
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+METHOD(Mustang, GetSpeed)
+  std::cout << "Insane" << std::endl;
+END_METHOD(Mustang, GetSpeed)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-  METHOD_REGISTRATION(A, Func);
-  METHOD_REGISTRATION(A, Skate);
-  METHOD_REGISTRATION(B, Func);
-  METHOD_REGISTRATION(B, Sky);
+  std::cout << "[*] SETTING UP THE ENVIRONMENT" << std::endl;
+  Car car;
+  Ford ford;
+  Mustang mustang;
+  auto super = reinterpret_cast<Car *>(&ford);
+  std::cout << "[x] SETTING UP THE ENVIRONMENT" << std::endl;
 
-  A a;
-  B b;
-  C c;
-  auto d = reinterpret_cast<A*>(&b);
-  auto e = reinterpret_cast<A*>(&c);
+  std::cout << "[*] TEST CAR" << std::endl;
+  VIRTUAL_CALL(car, What)
+  VIRTUAL_CALL(car, GetCompany)
+  VIRTUAL_CALL(car, IsCool)
+  VIRTUAL_CALL(car, GetSpeed)
+  std::cout << "[x] TEST CAR" << std::endl;
 
-  VIRTUAL_CALL(a, Func)
-  VIRTUAL_CALL(a, Skate)
-  std::cout << std::endl;
+  std::cout << "[*] TEST FORD" << std::endl;
+  VIRTUAL_CALL(ford, What)
+  VIRTUAL_CALL(ford, GetCompany)
+  VIRTUAL_CALL(ford, IsCool)
+  VIRTUAL_CALL(ford, GetSpeed)
+  std::cout << "[x] TEST FORD" << std::endl;
 
-  VIRTUAL_CALL(b, Func)
-  VIRTUAL_CALL(b, Skate)
-  VIRTUAL_CALL(b, Sky)
-  std::cout << std::endl;
+  std::cout << "[*] TEST MUSTANG" << std::endl;
+  VIRTUAL_CALL(mustang, What)
+  VIRTUAL_CALL(mustang, GetCompany)
+  VIRTUAL_CALL(mustang, IsCool)
+  VIRTUAL_CALL(mustang, GetSpeed)
+  std::cout << "[x] TEST MUSTANG" << std::endl;
 
-  VIRTUAL_CALL(c, Func)
-  VIRTUAL_CALL(c, Skate)
-  VIRTUAL_CALL(c, Sky)
-  std::cout << std::endl;
+  std::cout << "[*] TEST CAST" << std::endl;
+  VIRTUAL_CALL((*super), What)
+  VIRTUAL_CALL((*super), GetCompany)
+  VIRTUAL_CALL((*super), IsCool)
+  VIRTUAL_CALL((*super), GetSpeed)
+  std::cout << "[x] TEST CAST" << std::endl;
 
-  VIRTUAL_CALL((*d), Func)
-  VIRTUAL_CALL((*d), Skate)
-  VIRTUAL_CALL((*d), Sky)
-  std::cout << std::endl;
-
-  VIRTUAL_CALL((*e), Func)
-  VIRTUAL_CALL((*e), Skate)
-  VIRTUAL_CALL((*e), Sky)
+  return 0;
 }
