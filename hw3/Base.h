@@ -5,14 +5,7 @@
 class class_t {\
 public:\
   static std::map<std::string, void (*)()> __vtable;\
-  std::map<std::string, void (*)()> *__reference;\
-  int __ ## class_t ## __() {\
-    auto _ = new std::map<std::string, void (*)()>;\
-    *_ = __vtable;\
-    __reference = _;\
-    return 0;\
-  }\
-  int __ ## class_t ## init__ = __ ## class_t ## __();\
+  std::map<std::string, void (*)()> *__reference{&__vtable};\
 
 #define END_VIRTUAL_CLASS(class_t)\
 };\

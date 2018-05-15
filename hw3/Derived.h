@@ -6,9 +6,7 @@ class class_t : public base_class_t {\
 public:\
   static std::map<std::string, void (*)()> __vtable;\
   int __ ## class_t ## __() {\
-    auto _ = new std::map<std::string, void (*)()>;\
-    *_ = __vtable;\
-    __reference = _;\
+    __reference = &__vtable;\
     return 0;\
   }\
   int __ ## class_t ## __init__ = __ ## class_t ## __();\
